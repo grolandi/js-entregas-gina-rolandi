@@ -44,6 +44,7 @@ if (acceso) {
                 monto = Number(prompt("¿Cuánto desea extraer?"));
                 if (monto <= 0) {
                     console.log("Monto inválido.");
+                    alert("Monto inválido.");
                 } else if (monto > LIMITE_EXTRACCION) {
                     console.log("Supera el límite de extracción de $" + LIMITE_EXTRACCION);
                     alert("Supera el límite de extracción de $" + LIMITE_EXTRACCION);
