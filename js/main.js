@@ -1,104 +1,83 @@
 // Información
-const titulo = "Mi Primer Script Interactivo";
-const descripcion = "Calculador de Signos";
+const titulo = "Pre-Entrega 2: Lógica de Programación y Control de Flujo";
+const descripcion = "Cajero Coder";
 
-const anioActual = 2026;
+// Simulador: Cajero automático
+const PIN_CORRECTO = "1234";
+const LIMITE_EXTRACCION = 20000;
+const MAX_INTENTOS = 3;
 
-// Obtener datos
-alert("Voy a calcular tu edad y tu signo del Zodiaco, para esto necesito tu nombre y tu fecha de nacimiento")
-const nombre = prompt("¿Cómo te llamás?");
-const anio = parseInt(prompt("Año de nacimiento (ej. 1990)"));
-const mes = parseInt(prompt("Mes de nacimiento = No poner 0 adelante de los números (Mayo = 5 no 05)"));
-const dia = parseInt(prompt("Día de nacimiento = No poner 0 adelante de los números (3 no 03)"));
+let saldo = 30000;
+let intentos = 0;
+let acceso = false;
 
-// Lógica de los signos
-let signo;
-function getSignoZodiaco(esteMes, esteDia) {
-    if (esteMes === 1) {
-        if (esteDia <= 19) {
-            signo = "Capricornio";
-        } else {
-            signo = "Acuario";
-        }
-    } else if (esteMes === 2) {
-        if (esteDia <= 18) {
-            signo = "Acuario";
-        } else {
-            signo = "Piscis";
-        }
-    } else if (esteMes === 3) {
-        if (esteDia <= 20) {
-            signo = "Piscis";
-        } else {
-            signo = "Aries";
-        }
-    } else if (esteMes === 4) {
-        if (esteDia <= 19) {
-            signo = "Aries";
-        } else {
-            signo = "Tauro";
-        }
-    } else if (esteMes === 5) {
-        if (esteDia <= 20) {
-            signo = "Tauro";
-        } else {
-            signo = "Géminis";
-        }
-    } else if (esteMes === 6) {
-        if (esteDia <= 20) {
-            signo = "Géminis";
-        } else {
-            signo = "Cáncer";
-        }
-    } else if (esteMes === 7) {
-        if (esteDia <= 22) {
-            signo = "Cáncer";
-        } else {
-            signo = "Leo";
-        }
-    } else if (esteMes === 8) {
-        if (esteDia <= 22) {
-            signo = "Leo";
-        } else {
-            signo = "Virgo";
-        }
-    } else if (esteMes === 9) {
-        if (esteDia <= 22) {
-            signo = "Virgo";
-        } else {
-            signo = "Libra";
-        }
-    } else if (esteMes === 10) {
-        if (esteDia <= 22) {
-            signo = "Libra";
-        } else {
-            signo = "Escorpio";
-        }
-    } else if (esteMes === 11) {
-        if (esteDia <= 21) {
-            signo = "Escorpio";
-        } else {
-            signo = "Sagitario";
-        }
-    } else if (esteMes === 12) {
-        if (esteDia <= 21) {
-            signo = "Sagitario";
-        } else {
-            signo = "Capricornio";
-        }
+alert("Bienvenido/a al Cajero Coder");
+
+// 1. VALIDAR PIN: máximo 3 intentos
+while (intentos < MAX_INTENTOS && acceso == false) {
+    let pin = prompt("Ingrese su PIN:");
+    if (pin == PIN_CORRECTO) {
+        acceso = true;
+        console.log("PIN correcto. Acceso concedido.");
+        alert("PIN correcto. Acceso concedido.");
+    } else {
+        intentos++;
+        console.log("PIN incorrecto. Intentos restantes: " + (MAX_INTENTOS - intentos));
+        alert("PIN incorrecto. Intentos restantes: " + (MAX_INTENTOS - intentos));
     }
 }
 
-// Calcular signo
-getSignoZodiaco(mes, dia);
+// 2. MENÚ: solo si el PIN fue correcto
+if (acceso) {
+    let continuar = true;
+    let monto;
 
-// Calcular edad
-const edad = anioActual - anio;
+    while (continuar) {
+        let menu = Number(prompt("Ingrese 1 para ver saldo, 2 para extracción, 3 para depósito, 4 para salir"));
 
-// Mostrar resultado
-console.log(titulo + " - " + descripcion);
-console.log("Nombre: " + nombre);
-console.log("Fecha de nacimiento: " + dia + "/" + mes + "/" + anio);
-console.log("Cumplís: " + edad + " años");
-console.log("Tu signo es: " + signo);
-alert("Hola " + nombre + ", este año cumplís " + edad + " años y tu signo es " + signo);
+        switch (menu) {
+            case 1:
+                console.log("Saldo actual: $" + saldo);
+                alert("Saldo actual: $" + saldo);
+                break;
+            case 2:
+                monto = Number(prompt("¿Cuánto desea extraer?"));
+                if (monto <= 0) {
+                    console.log("Monto inválido.");
+                } else if (monto > LIMITE_EXTRACCION) {
+                    console.log("Supera el límite de extracción de $" + LIMITE_EXTRACCION);
+                    alert("Supera el límite de extracción de $" + LIMITE_EXTRACCION);
+                } else if (monto > saldo) {
+                    console.log("Saldo insuficiente. Saldo actual: $" + saldo);
+                    alert("Saldo insuficiente. Saldo actual: $" + saldo);
+                } else {
+                    saldo = saldo - monto;
+                    console.log("Extracción exitosa. Nuevo saldo: $" + saldo);
+                    alert("Extracción exitosa. Nuevo saldo: $" + saldo);
+                }
+                break;
+            case 3:
+                monto = Number(prompt("¿Cuánto desea depositar?"));
+                if (monto > 0) {
+                    saldo = saldo + monto;
+                    console.log("Depósito exitoso. Nuevo saldo: $" + saldo);
+                    alert("Depósito exitoso. Nuevo saldo: $" + saldo);
+                } else {
+                    console.log("Monto inválido.");
+                    alert("Monto inválido.");
+                }
+                break;
+            case 4:
+                continuar = false;
+                break;
+            default:
+                console.log("Opción incorrecta.");
+                alert("Opción incorrecta.");
+        }
+    }
+    console.log("Gracias por usar Cajero Coder. Retire su tarjeta.");
+    alert("Gracias por usar Cajero Coder. Retire su tarjeta.");
+} else {
+    console.log("Tarjeta retenida por demasiados intentos.");
+    alert("Tarjeta retenida por demasiados intentos.");
+}
