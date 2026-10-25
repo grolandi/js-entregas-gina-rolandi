@@ -1,84 +1,126 @@
 // Información
-const titulo = "Pre-Entrega 2: Lógica de Programación y Control de Flujo";
+const titulo = "Pre-Entrega 3: Funciones e Integración de Lógica";
 const descripcion = "Cajero Coder";
 
-// Simulador: Cajero automático
+// Cajero automático
 const PIN_CORRECTO = "1234";
 const LIMITE_EXTRACCION = 20000;
 const MAX_INTENTOS = 3;
+const SALDO_INICIAL = 30000;
 
-let saldo = 30000;
-let intentos = 0;
-let acceso = false;
+// FUNCIONES
 
-alert("Bienvenido/a al Cajero Coder");
+// Mostar un mensaje en la consola y en un alert
+const mostrarMensaje = (mensaje) => {
+    console.log(mensaje);
+    alert(mensaje);
+};
 
-// 1. VALIDAR PIN: máximo 3 intentos
-while (intentos < MAX_INTENTOS && acceso == false) {
-    let pin = prompt("Ingrese su PIN:");
-    if (pin == PIN_CORRECTO) {
-        acceso = true;
-        console.log("PIN correcto. Acceso concedido.");
-        alert("PIN correcto. Acceso concedido.");
-    } else {
+// Función flecha: valida que 'monto' sea un número y mayor a 0. Retorna true o false.
+const esMontoValido = (monto) => !isNaN(monto) && monto > 0;
+
+
+// Pedir el PIN hasta un máximo de intentos.
+function validarPin(pinCorrecto, maxIntentos) {
+    let intentos = 0;
+
+    while (intentos < maxIntentos) {
+        let pin = prompt("Ingrese su PIN:");
+
+        if (pin === pinCorrecto) {
+            mostrarMensaje("PIN correcto. Acceso concedido.");
+            return true;
+        }
+
         intentos++;
-        console.log("PIN incorrecto. Intentos restantes: " + (MAX_INTENTOS - intentos));
-        alert("PIN incorrecto. Intentos restantes: " + (MAX_INTENTOS - intentos));
+        mostrarMensaje("PIN incorrecto. Intentos restantes: " + (maxIntentos - intentos));
     }
+
+    return false;
 }
 
-// 2. MENÚ: solo si el PIN fue correcto
-if (acceso) {
+// Pedir un monto al usuario
+function pedirMonto(mensaje) {
+    let monto = Number(prompt(mensaje));
+    return monto;
+}
+
+// Muestrar el saldo actual
+function mostrarSaldo(saldoActual) {
+    mostrarMensaje("Saldo actual: $" + saldoActual);
+}
+
+// Realizar una extracción
+const extraer = function (saldoActual, monto, limite) {
+    if (!esMontoValido(monto)) {
+        mostrarMensaje("Monto inválido.");
+    } else if (monto > limite) {
+        mostrarMensaje("Supera el límite de extracción de $" + limite);
+    } else if (monto > saldoActual) {
+        mostrarMensaje("Saldo insuficiente. Saldo actual: $" + saldoActual);
+    } else {
+        saldoActual = saldoActual - monto;
+        mostrarMensaje("Extracción exitosa. Nuevo saldo: $" + saldoActual);
+    }
+    return saldoActual;
+};
+
+// Realizar un depósito
+const depositar = function (saldoActual, monto) {
+    if (esMontoValido(monto)) {
+        saldoActual = saldoActual + monto;
+        mostrarMensaje("Depósito exitoso. Nuevo saldo: $" + saldoActual);
+    } else {
+        mostrarMensaje("Monto inválido.");
+    }
+    return saldoActual;
+};
+
+// Mostrar el menú y ejecutar la operación elegida
+function iniciarMenu(saldoInicial) {
+    let saldo = saldoInicial;
     let continuar = true;
-    let monto;
 
     while (continuar) {
-        let menu = Number(prompt("Ingrese 1 para ver saldo, 2 para extracción, 3 para depósito, 4 para salir"));
+        let opcion = prompt("Ingrese 1 para ver saldo, 2 para extracción, 3 para depósito, 4 para salir");
 
-        switch (menu) {
+        // Si el usuario presiona "Cancelar", se sale del menú
+        if (opcion === null) {
+            opcion = "4";
+        }
+
+        switch (Number(opcion)) {
             case 1:
-                console.log("Saldo actual: $" + saldo);
-                alert("Saldo actual: $" + saldo);
+                mostrarSaldo(saldo);
                 break;
             case 2:
-                monto = Number(prompt("¿Cuánto desea extraer?"));
-                if (monto <= 0) {
-                    console.log("Monto inválido.");
-                    alert("Monto inválido.");
-                } else if (monto > LIMITE_EXTRACCION) {
-                    console.log("Supera el límite de extracción de $" + LIMITE_EXTRACCION);
-                    alert("Supera el límite de extracción de $" + LIMITE_EXTRACCION);
-                } else if (monto > saldo) {
-                    console.log("Saldo insuficiente. Saldo actual: $" + saldo);
-                    alert("Saldo insuficiente. Saldo actual: $" + saldo);
-                } else {
-                    saldo = saldo - monto;
-                    console.log("Extracción exitosa. Nuevo saldo: $" + saldo);
-                    alert("Extracción exitosa. Nuevo saldo: $" + saldo);
-                }
+                saldo = extraer(saldo, pedirMonto("¿Cuánto desea extraer?"), LIMITE_EXTRACCION);
                 break;
             case 3:
-                monto = Number(prompt("¿Cuánto desea depositar?"));
-                if (monto > 0) {
-                    saldo = saldo + monto;
-                    console.log("Depósito exitoso. Nuevo saldo: $" + saldo);
-                    alert("Depósito exitoso. Nuevo saldo: $" + saldo);
-                } else {
-                    console.log("Monto inválido.");
-                    alert("Monto inválido.");
-                }
+                saldo = depositar(saldo, pedirMonto("¿Cuánto desea depositar?"));
                 break;
             case 4:
                 continuar = false;
                 break;
             default:
-                console.log("Opción incorrecta.");
-                alert("Opción incorrecta.");
+                mostrarMensaje("Opción incorrecta.");
         }
     }
-    console.log("Gracias por usar Cajero Coder. Retire su tarjeta.");
-    alert("Gracias por usar Cajero Coder. Retire su tarjeta.");
+
+    return saldo;
+}
+
+// PROGRAMA PRINCIPAL 
+
+console.log(titulo + " - " + descripcion);
+alert("Bienvenido/a al " + descripcion);
+
+let acceso = validarPin(PIN_CORRECTO, MAX_INTENTOS);
+
+if (acceso) {
+    let saldoFinal = iniciarMenu(SALDO_INICIAL);
+    console.log("Saldo final de la sesión: $" + saldoFinal);
+    mostrarMensaje("Gracias por usar " + descripcion + ". Retire su tarjeta.");
 } else {
-    console.log("Tarjeta retenida por demasiados intentos.");
-    alert("Tarjeta retenida por demasiados intentos.");
+    mostrarMensaje("Tarjeta retenida por demasiados intentos.");
 }
