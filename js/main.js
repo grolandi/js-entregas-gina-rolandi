@@ -1,218 +1,140 @@
 // Información
-const titulo = "Pre-Entrega 3: Funciones e Integración de Lógica";
-const descripcion = "Cajero Coder";
+const titulo = "Pre-Entrega 4: Uso e interacción con Arrays";
+const descripcion = "Playlist CODER";
 
-// Cajero automático
-const pinCorrecto = "1234";
-const limiteExtraccion = 20000;
-const maxIntentos = 3;
-const saldoInicial = 30000;
+// Playlist inicial
+const playlist = ["Iris", "Yellow", "Creep", "Complicated", "Wonderwall"];
 
-// ARRAY: agenda de destinatarios para transferencias
-const destinatarios = ["Gina", "Jesus", "Milton", "Tomas", "Sol"];
 
 // FUNCIONES
 
-// Función flecha: valida que 'monto' sea un número y mayor a 0. Retorna true o false.
-const esMontoValido = (monto) => !isNaN(monto) && monto > 0;
-
-// Función flecha: valida que el texto ingresado no esté vacío ni cancelado
-const esTextoValido = (texto) => texto !== null && texto.trim() !== "";
-
-// Pedir el PIN hasta un máximo de intentos. Retorna true si el PIN es correcto.
-function validarPin(pin, intentosMaximos) {
-    let intentos = 0;
-
-    while (intentos < intentosMaximos) {
-        if (prompt("Ingrese su PIN:") === pin) {
-            alert("PIN correcto. Acceso concedido.");
-            return true;
-        }
-
-        intentos++;
-        alert("PIN incorrecto. Intentos restantes: " + (intentosMaximos - intentos));
+// Revisa que el texto no esté vacío
+function esTextoValido(texto) {
+    if (texto !== null && texto !== "") { 
+        return true;
     }
-
     return false;
 }
 
-// Realizar una extracción. Retorna el nuevo saldo.
-const extraer = (saldoActual, monto, limite) => {
-    switch (true) {
-        case !esMontoValido(monto):
-            alert("Monto inválido.");
-            break;
-        case monto > limite:
-            alert("Supera el límite de extracción de $" + limite);
-            break;
-        case monto > saldoActual:
-            alert("Saldo insuficiente. Saldo actual: $" + saldoActual);
-            break;
-        default:
-            saldoActual = saldoActual - monto;
-            alert("Extracción exitosa. Nuevo saldo: $" + saldoActual);
-    }
-    return saldoActual;
-};
-
-// Realizar un depósito. Retorna el nuevo saldo.
-const depositar = (saldoActual, monto) => {
-    if (esMontoValido(monto)) {
-        saldoActual = saldoActual + monto;
-        alert("Depósito exitoso. Nuevo saldo: $" + saldoActual);
-    } else {
-        alert("Monto inválido.");
-    }
-    return saldoActual;
-};
-
-
-// FUNCIONES DEL ARRAY
-
-// Recorrer la agenda y mostrar destinatarios
-function listarDestinatarios(lista) {
+// Muestra la playlist
+function mostrarPlaylist(lista) {
     let texto = "";
-    let posicion = 0;
+    let indice = 0;
 
-    for (const destinatario of lista) {
-        texto = texto + posicion + ". " + destinatario + "\n";
-        posicion++;
+    console.log("Playlist actual");
+    for (const cancion of lista) {
+        console.log("[" + indice + "] " + cancion);
+        texto = texto + "[" + indice + "] " + cancion + "\n"; // '\n' es un salto de línea
+        indice++; 
     }
+    console.log("Total: " + lista.length + " canciones");
 
-    alert("Agenda de destinatarios:\n" + texto + "Total: " + lista.length);
+    alert("Playlist actual:\n" + texto + "\nTotal: " + lista.length + " canciones");
 }
 
-// Agregar un destinatario: al principio si es favorito (unshift), si no al final (push)
-function agregarDestinatario(lista, nombre, esFavorito) {
-    switch (true) {
-        case !esTextoValido(nombre):
-            alert("Nombre inválido.");
-            break;
-        case lista.includes(nombre):
-            alert(nombre + " ya está en la agenda.");
-            break;
-        case esFavorito:
-            lista.unshift(nombre);
-            alert(nombre + " se agregó como favorito, al principio de la agenda.");
-            break;
-        default:
-            lista.push(nombre);
-            alert(nombre + " se agregó al final de la agenda.");
-    }
-}
-
-// Eliminar el último destinatario (pop) y mostrar cuál fue
-function eliminarUltimoDestinatario(lista) {
-    if (lista.length === 0) {
-        alert("La agenda está vacía.");
-    } else {
-        alert("Se ha eliminado el elemento: " + lista.pop());
-    }
-}
-
-// Corregir el nombre de un destinatario reemplazándolo por índice (splice)
-function editarDestinatario(lista, nombreActual, nombreNuevo) {
-    const posicion = lista.indexOf(nombreActual);
-
-    if (posicion === -1) {
-        alert("Destinatario no encontrado en la agenda.");
-    } else if (!esTextoValido(nombreNuevo)) {
+// Agrega una canción al final (.push)
+function agregarAlFinal(lista, cancion) {
+    if (esTextoValido(cancion) === false) { 
         alert("Nombre inválido.");
+    } else if (lista.includes(cancion)) { 
+        alert(cancion + " ya está en la playlist.");
     } else {
-        lista.splice(posicion, 1, nombreNuevo);
-        alert("Posición " + posicion + ": " + nombreActual + " fue reemplazado por " + nombreNuevo);
+        lista.push(cancion);
+        alert(cancion + " se agregó al final de la playlist.");
     }
 }
 
-// Transferir a un destinatario de la agenda. Retorna el nuevo saldo.
-function transferir(saldoActual, lista, nombre, monto) {
-    switch (true) {
-        case !lista.includes(nombre):
-            alert("Destinatario no encontrado en la agenda. Agréguelo antes de transferir.");
-            break;
-        case !esMontoValido(monto):
-            alert("Monto inválido.");
-            break;
-        case monto > saldoActual:
-            alert("Saldo insuficiente. Saldo actual: $" + saldoActual);
-            break;
-        default:
-            saldoActual = saldoActual - monto;
-            alert("Transferencia de $" + monto + " a " + nombre + " exitosa. Nuevo saldo: $" + saldoActual);
+// Agrega una canción al principio (.unshift)
+function agregarAlPrincipio(lista, cancion) {
+    if (esTextoValido(cancion) === false) {
+        alert("Nombre inválido.");
+    } else if (lista.includes(cancion)) {
+        alert(cancion + " ya está en la playlist.");
+    } else {
+        lista.unshift(cancion); 
+        alert(cancion + " se reproducirá a continuación.");
     }
-    return saldoActual;
+}
+
+// Borra la última canción
+function quitarUltima(lista) {
+    const eliminada = lista.pop();
+    alert("Se ha eliminado el elemento: " + eliminada);
+}
+
+// Busca una canción y muestra su posición (.indexOF / .includes)
+function buscarCancion(lista, buscada) {
+    if (lista.includes(buscada)) {
+        const posicion = lista.indexOf(buscada);
+        console.log(buscada + " está en la posición [" + posicion + "] de la playlist");
+        alert(buscada + " está en la posición [" + posicion + "] de la playlist");
+    } else {
+        console.log(buscada + " no está en la playlist");
+        alert(buscada + " no está en la playlist.");
+    }
+}
+
+// Reemplaza una canción (.sploce)
+function reemplazarCancion(lista, indice, nuevaCancion) {
+    if (indice < lista.length) {
+        lista.splice(indice, 1, nuevaCancion);
+        alert("La canción " + indice + " ahora es " + nuevaCancion);
+    } else {
+        alert("Ese número no existe.");
+    }
 }
 
 
-// Mostrar el menú y ejecutar la operación elegida. Retorna el saldo final.
-function iniciarMenu(saldoDeInicio) {
-    let saldo = saldoDeInicio;
+// MENÚ PRINCUPAL
+function iniciarMenu(lista) {
     let continuar = true;
-    let nombre;
-
     while (continuar) {
-        // El dato se convierte a número al capturarlo. Si se presiona "Cancelar", Number(null) es 0.
         const opcion = Number(prompt(
-            "Elija una opción:\n" +
-            "1. Ver saldo\n" +
-            "2. Extracción\n" +
-            "3. Depósito\n" +
-            "4. Transferir\n" +
-            "5. Ver agenda de destinatarios\n" +
-            "6. Agregar destinatario\n" +
-            "7. Eliminar último destinatario\n" +
-            "8. Corregir nombre de un destinatario\n" +
-            "9. Salir"
+            "Elijí una opción:\n" +
+            "1. Ver playlist\n" +
+            "2. Agregar canción al final\n" +
+            "3. Agregar canción al inicio\n" +
+            "4. Quitar última canción\n" +
+            "5. Buscar canción\n" +
+            "6. Reemplazar canción\n" +
+            "0. Salir"
         ));
 
         switch (opcion) {
             case 1:
-                alert("Saldo actual: $" + saldo);
+                mostrarPlaylist(lista);
                 break;
             case 2:
-                saldo = extraer(saldo, Number(prompt("¿Cuánto desea extraer?")), limiteExtraccion);
+                agregarAlFinal(lista, prompt("Nombre de la canción:"));
                 break;
             case 3:
-                saldo = depositar(saldo, Number(prompt("¿Cuánto desea depositar?")));
+                agregarAlPrincipio(lista, prompt("Nombre de la canción:"));
                 break;
             case 4:
-                nombre = prompt("¿A quién desea transferir? Agenda: " + destinatarios.join(", "));
-                saldo = transferir(saldo, destinatarios, nombre, Number(prompt("¿Cuánto desea transferir?")));
+                quitarUltima(lista);
                 break;
             case 5:
-                listarDestinatarios(destinatarios);
+                buscarCancion(lista, prompt("¿Qué canción querés buscar?"));
                 break;
             case 6:
-                nombre = prompt("Nombre del nuevo destinatario:");
-                agregarDestinatario(destinatarios, nombre, prompt("¿Agregarlo como favorito, al principio de la agenda? (s/n)") === "s");
-                break;
-            case 7:
-                eliminarUltimoDestinatario(destinatarios);
-                break;
-            case 8:
-                nombre = prompt("¿Qué destinatario desea corregir? Agenda: " + destinatarios.join(", "));
-                editarDestinatario(destinatarios, nombre, prompt("Nuevo nombre para " + nombre + ":"));
+                const indice = Number(prompt("Número de la canción que querés reemplazar:"));
+                const nueva = prompt("Nombre de la nueva canción:");
+                reemplazarCancion(lista, indice, nueva);
                 break;
             case 0:
-            case 9:
                 continuar = false;
                 break;
             default:
                 alert("Opción incorrecta.");
         }
     }
-
-    return saldo;
 }
+
 
 // PROGRAMA PRINCIPAL
 
 console.log(titulo + " - " + descripcion);
-alert("Bienvenido/a al " + descripcion);
+alert("Bienvenido/a a " + descripcion + ". La playlist tiene " + playlist.length + " canciones.");
 
-if (validarPin(pinCorrecto, maxIntentos)) {
-    console.log("Saldo final de la sesión: $" + iniciarMenu(saldoInicial));
-    alert("Gracias por usar " + descripcion + ". Retire su tarjeta.");
-} else {
-    alert("Tarjeta retenida por demasiados intentos.");
-}
+iniciarMenu(playlist);
+alert("Gracias por usar " + descripcion + ".");
